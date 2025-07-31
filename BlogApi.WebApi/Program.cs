@@ -5,9 +5,13 @@ using BlogApi.Infrastructure.Auth;
 using BlogApi.Infrastructure.Persistence;
 using BlogApi.Infrastructure.Posts;
 using BlogApi.Infrastructure.RealTime;
+using BlogApi.WebApi.Validators;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,12 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddSignalR();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreatePostRequestValidator>();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 builder.Services.AddAuthentication(options =>
@@ -76,6 +86,16 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddRateLimiter(_ =>
+{
+    _.AddFixedWindowLimiter("fixed", options =>
+    {
+        options.Window = TimeSpan.FromSeconds(10);
+        options.PermitLimit = 10; // Máximo 10 requisições a cada 10s
+        options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        options.QueueLimit = 2;
+    });
+});
 
 var app = builder.Build();
 
@@ -86,6 +106,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRateLimiter();
 app.MapHub<NotificationHub>("/hubs/notifications");
 app.UseAuthentication();
 app.UseAuthorization();

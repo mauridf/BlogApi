@@ -1,6 +1,7 @@
 ﻿using BlogApi.Application.Posts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
 namespace BlogApi.Infrastructure.Controllers;
@@ -28,6 +29,7 @@ public class PostsController : ControllerBase
     }
 
     [Authorize]
+    [EnableRateLimiting("fixed")]
     [HttpPost]
     public async Task<IActionResult> Create(CreatePostRequest request)
     {

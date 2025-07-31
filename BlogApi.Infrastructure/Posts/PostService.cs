@@ -4,6 +4,7 @@ using BlogApi.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 using BlogApi.Infrastructure.RealTime;
+using Microsoft.Extensions.Logging;
 
 namespace BlogApi.Infrastructure.Posts;
 
@@ -11,11 +12,13 @@ public class PostService : IPostService
 {
     private readonly BlogDbContext _context;
     private readonly IHubContext<NotificationHub> _hub;
+    private readonly ILogger<PostService> _logger;
 
-    public PostService(BlogDbContext context, IHubContext<NotificationHub> hub)
+    public PostService(BlogDbContext context, IHubContext<NotificationHub> hub, ILogger<PostService> logger)
     {
         _context = context;
         _hub = hub;
+        _logger = logger;
     }
 
     public async Task<PostResponse> CreateAsync(CreatePostRequest request, Guid userId)
@@ -23,6 +26,8 @@ public class PostService : IPostService
         var post = new Post(request.Title, request.Content, userId);
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Post criado com ID: {PostId}", post.Id);
 
         var author = await _context.Users.FindAsync(userId);
         var response = ToResponse(post, author!.Username);
@@ -58,6 +63,8 @@ public class PostService : IPostService
         post.Update(request.Title, request.Content);
         await _context.SaveChangesAsync();
 
+        _logger.LogInformation("Post alterado com ID: {PostId}", post.Id);
+
         return ToResponse(post, post.Author.Username);
     }
 
@@ -68,6 +75,8 @@ public class PostService : IPostService
 
         _context.Posts.Remove(post);
         await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Post deletado com ID: {PostId}", post.Id);
 
         return true;
     }
