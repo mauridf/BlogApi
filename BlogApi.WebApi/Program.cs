@@ -1,7 +1,9 @@
 using System.Text;
 using BlogApi.Application.Auth;
+using BlogApi.Application.Posts;
 using BlogApi.Infrastructure.Auth;
 using BlogApi.Infrastructure.Persistence;
+using BlogApi.Infrastructure.Posts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +20,7 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPostService, PostService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 builder.Services.AddAuthentication(options =>
