@@ -1,7 +1,7 @@
 ﻿using BlogApi.Application.Auth;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BlogApi.WebApi.Controllers;
+namespace BlogApi.Infrastructure.Controllers;
 
 [ApiController]
 [Route("auth")]

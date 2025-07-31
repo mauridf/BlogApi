@@ -2,16 +2,20 @@
 using BlogApi.Domain.Entities;
 using BlogApi.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using BlogApi.Infrastructure.RealTime;
 
 namespace BlogApi.Infrastructure.Posts;
 
 public class PostService : IPostService
 {
     private readonly BlogDbContext _context;
+    private readonly IHubContext<NotificationHub> _hub;
 
-    public PostService(BlogDbContext context)
+    public PostService(BlogDbContext context, IHubContext<NotificationHub> hub)
     {
         _context = context;
+        _hub = hub;
     }
 
     public async Task<PostResponse> CreateAsync(CreatePostRequest request, Guid userId)
@@ -21,7 +25,12 @@ public class PostService : IPostService
         await _context.SaveChangesAsync();
 
         var author = await _context.Users.FindAsync(userId);
-        return ToResponse(post, author!.Username);
+        var response = ToResponse(post, author!.Username);
+
+        // Disparar notificação para todos conectados
+        await _hub.Clients.All.SendAsync("NewPost", response);
+
+        return response;
     }
 
     public async Task<IEnumerable<PostResponse>> GetAllAsync()

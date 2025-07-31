@@ -4,6 +4,7 @@ using BlogApi.Application.Posts;
 using BlogApi.Infrastructure.Auth;
 using BlogApi.Infrastructure.Persistence;
 using BlogApi.Infrastructure.Posts;
+using BlogApi.Infrastructure.RealTime;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -21,6 +22,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddSignalR();
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 builder.Services.AddAuthentication(options =>
@@ -84,6 +86,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapHub<NotificationHub>("/hubs/notifications");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

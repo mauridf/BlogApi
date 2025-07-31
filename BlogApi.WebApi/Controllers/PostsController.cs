@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace BlogApi.WebApi.Controllers;
+namespace BlogApi.Infrastructure.Controllers;
 
 [ApiController]
 [Route("posts")]
