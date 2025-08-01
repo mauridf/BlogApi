@@ -15,4 +15,16 @@ public class User
         Username = username;
         PasswordHash = passwordHash;
     }
+
+    public static User Create(string username, string passwordHash)
+    {
+        // Aqui você pode adicionar validações simples, ex:
+        if (string.IsNullOrWhiteSpace(username))
+            throw new ArgumentException("Username cannot be empty.", nameof(username));
+
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            throw new ArgumentException("Password hash cannot be empty.", nameof(passwordHash));
+
+        return new User(username, passwordHash);
+    }
 }

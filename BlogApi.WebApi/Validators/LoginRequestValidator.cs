@@ -1,13 +1,13 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Identity.Data;
+﻿using BlogApi.Application.Auth;
+using FluentValidation;
 
 namespace BlogApi.WebApi.Validators
 {
-    public class LoginRequestValidator : AbstractValidator<LoginRequest>
+    public class LoginRequestValidator : AbstractValidator<LoginUserRequest>
     {
         public LoginRequestValidator()
         {
-            RuleFor(x => x.Email).NotEmpty();
+            RuleFor(x => x.Username).NotEmpty();
             RuleFor(x => x.Password).NotEmpty();
         }
     }
