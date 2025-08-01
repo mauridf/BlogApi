@@ -94,10 +94,11 @@ Conecte-se a `ws://localhost:5000/notificationHub` para receber eventos como:
 
 ## 👨‍💻 Autor
 
-Desenvolvido por Maurício Carvalho - [LinkedIn](https://www.linkedin.com/in/mauriciocarvalhodev)
+Desenvolvido por Maurício Carvalho - [LinkedIn](https://www.linkedin.com/in/mdcoliveira/)
 
 ---
 
-## 🖼️ Licença
+## 🖼️ Observação
 
-MIT
+Criei um [frontend](https://github.com/mauridf/blog-frontend) básico somente a título de efetuar teste. 
+Quando o backend estiver rodando pode executar o frontend junto e testar ou usar Postman, Swagger ou outra ferramenta também.
