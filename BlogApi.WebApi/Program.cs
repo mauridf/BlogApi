@@ -15,6 +15,17 @@ using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials(); // Se estiver usando cookies ou autenticação
+    });
+});
+
 // PostgreSQL connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -98,6 +109,8 @@ builder.Services.AddRateLimiter(_ =>
 });
 
 var app = builder.Build();
+
+app.UseCors("AllowAngularDev");
 
 // Swagger e middleware
 if (app.Environment.IsDevelopment())
